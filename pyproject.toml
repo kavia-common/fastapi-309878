@@ -129,7 +129,7 @@ dev = [
     { include-group = "docs" },
     { include-group = "translations" },
     "playwright>=1.57.0",
-    "prek==0.2.22",
+    "prek==0.2.30",
 ]
 docs = [
     { include-group = "docs-tests" },

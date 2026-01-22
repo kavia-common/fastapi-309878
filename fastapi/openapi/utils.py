@@ -438,6 +438,19 @@ def get_openapi_path(
                     )
             if route.openapi_extra:
                 deep_dict_update(operation, route.openapi_extra)
+
+            # OpenAPI PathItem supports only standard operation keys (get/put/post/...)
+            # but FastAPI can route any HTTP method string (e.g. "QUERY").
+            # To keep OpenAPI output stable and discoverable for custom verbs, we:
+            # 1) Emit the operation under a non-standard key (e.g. "query") so the
+            #    schema includes the operation definition.
+            # 2) Add a vendor extension so tooling can identify the real HTTP method
+            #    even if it ignores unknown keys.
+            #
+            # Note: Some OpenAPI tools might ignore or error on unknown keys. FastAPI
+            # can't change those tools; this provides best-effort representation.
+            operation.setdefault("x-fastapi-method", method.upper())
+
             path[method.lower()] = operation
     return path, security_schemes, definitions
 
